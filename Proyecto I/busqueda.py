@@ -218,3 +218,28 @@ def greedy_search(problema, f):
                 frontera.push(hijo, v)
                 explorados.append(cod)
     return None
+
+
+def A_star(problema, f, g=None):
+    if g != None:
+        problema.costo = MethodType(g, problema)
+    s = problema.estado_inicial
+    cod = problema.codigo(s)
+    nodo = Nodo(s, None, None, 0, cod)
+    v = f(s)
+    frontera = ListaPrioritaria()
+    frontera.push(nodo, v)
+    explorados = {}
+    explorados[cod] = v
+    while not frontera.is_empty():
+        nodo = frontera.pop()
+        if problema.test_objetivo(nodo.estado):
+            return nodo
+        for hijo in expand(problema, nodo):
+            s = hijo.estado
+            cod = problema.codigo(s)
+            c = hijo.costo_camino + f(s)
+            if (cod not in explorados.keys()) or (c < explorados[cod]):
+                frontera.push(hijo, c)
+                explorados[cod] = c
+    return None
